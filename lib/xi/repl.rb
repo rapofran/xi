@@ -25,15 +25,21 @@ module Xi
     def configure
       prepare_config_dir
 
-      if ENV["INSIDE_EMACS"]
+      prompts = if ENV["INSIDE_EMACS"]
         Pry.config.correct_indent = false
         Pry.config.pager = false
-        Pry.config.prompt = [ proc { "" }, proc { "" }]
+        [ proc { "" }, proc { "" }]
       else
-        Pry.config.prompt = [ proc { "xi> " }, proc { "..> " }]
+        [ proc { "xi> " }, proc { "..> " }]
       end
+      Pry::Prompt.new("Guard", "Guard Pry prompt", prompts)
 
-      Pry.config.history.file = history_path
+      # Pry >= 0.13
+      if Pry.config.respond_to?(:history_file=)
+        Pry.config.history_file = history_path
+      else
+        Pry.config.history.file = history_path
+      end
 
       Pry.hooks.add_hook(:after_eval, "check_for_errors") do |result, pry|
         more_errors = ErrorLog.instance.more_errors?
@@ -55,7 +61,7 @@ module Xi
     def prepare_config_dir
       FileUtils.mkdir_p(CONFIG_PATH)
 
-      unless File.exists?(init_script_path)
+      unless File.exist?(init_script_path)
         File.write(init_script_path, DEFAULT_INIT_SCRIPT)
       end
     end
