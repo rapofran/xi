@@ -59,7 +59,7 @@ module Xi
     #   #     [3,  4, 1, 0]]
     #
     # @param source [Array]
-    # @param size [Fixnum] number of events per iteration
+    # @param size [Integer] number of events per iteration
     # @param delta [Numeric, Array<Numeric>, Pattern<Numeric>] event delta
     # @param metadata [Hash]
     # @yield [yielder, delta] yielder and event delta
@@ -345,7 +345,7 @@ module Xi
 
     # Returns the first +n+ events from the pattern, starting from +cycle+
     #
-    # @param n [Fixnum]
+    # @param n [Integer]
     # @param cycle [Numeric]
     # @return [Array] values
     #
@@ -363,6 +363,16 @@ module Xi
       take(*args).map(&:first)
     end
 
+    # @see #take_values
+    def peek(n=10, *args)
+      take_values(n, *args)
+    end
+
+    # @see #take
+    def peek_events(n=10, cycle=0)
+      take(n, cycle)
+    end
+
     # Returns the first element, or the first +n+ elements, of the pattern.
     #
     # If the pattern is empty, the first form returns nil, and the second form
@@ -370,7 +380,7 @@ module Xi
     #
     # @see #take
     #
-    # @param n [Fixnum]
+    # @param n [Integer]
     # @param args same arguments as {#take}
     # @return [Object, Array]
     #
@@ -410,7 +420,7 @@ module Xi
     # pattern size is assumed to be 1, so iteration size depends on delta
     # values.
     #
-    # @return [Fixnum]
+    # @return [Integer]
     #
     def iteration_size
       finite? ? delta_size.lcm(@size) : delta_size

@@ -1,3 +1,4 @@
+require "irb"
 require "pry"
 require 'io/console'
 require "xi/error_log"
@@ -14,11 +15,11 @@ module Xi
       "# Here you can customize or define functions that will be available in\n" \
       "# Xi, e.g. new streams or a custom clock."
 
-    def start
+    def start(irb: false)
       configure
       load_init_script
 
-      Pry.start
+      irb ? IRB.start : Pry.start
     end
 
     def configure

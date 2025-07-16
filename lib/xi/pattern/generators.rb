@@ -61,7 +61,7 @@ module Xi
       #   peek P.rand([1, 2, 3, 4], 6)    #=> [1, 3, 2, 2, 4, 3]
       #
       # @param list [#each] list of values
-      # @param repeats [Fixnum, Symbol] number or inf (default: 1)
+      # @param repeats [Integer, Symbol] number or inf (default: 1)
       # @return [Pattern]
       #
       def rand(list, repeats=1)
@@ -83,7 +83,7 @@ module Xi
       #   peek P.xrand([1, 2, 3], 8)       #=> [1, 3, 2, 3, 1, 2, 3, 2]
       #
       # @param list [#each] list of values
-      # @param repeats [Fixnum, Symbol] number or inf (default: 1)
+      # @param repeats [Integer, Symbol] number or inf (default: 1)
       # @return [Pattern]
       #
       def xrand(list, repeats=1)
@@ -109,7 +109,7 @@ module Xi
       #   peek P.shuf([1, 2, 3], 3)       #=> [2, 3, 1, 2, 3, 1, 2, 3, 1]
       #
       # @param list [#each] list of values
-      # @param repeats [Fixnum, Symbol] number or inf (default: 1)
+      # @param repeats [Integer, Symbol] number or inf (default: 1)
       # @return [Pattern]
       #
       def shuf(list, repeats=1)
@@ -124,48 +124,101 @@ module Xi
       # Generates values from a sinewave discretized to +quant+ events
       # for the duration of +delta+ cycles.
       #
-      # Values range from -1 to 1
-      #
-      # @see #sin1 for the same function but constrained on 0 to 1 values
+      # Values range from 0 to 1
       #
       # @example
-      #   P.sin(8).map { |i| i.round(2) }
-      #     #=> [0.0, 0.71, 1.0, 0.71, 0.0, -0.71, -1.0, -0.71]
+      #   peek P.sin(8).map { |i| i.round(2) }
+      #     #=> [0.5, 0.85, 1.0, 0.85, 0.5, 0.15, 0.0, 0.15, 0.5, 0.85]
       #
       # @example +quant+ determines the size, +delta+ the total duration
       #   P.sin(8).size           #=> 8
       #   P.sin(22).duration      #=> (1/1)
       #   P.sin(19, 2).duration   #=> (2/1)
       #
-      # @param quant [Fixnum]
-      # @param delta [Fixnum] (default: 1)
+      # @param quant [Integer]
+      # @param delta [Integer] (default: 1)
       # @return [Pattern]
       #
       def sin(quant, delta=1)
         Pattern.new(size: quant, delta: delta / quant) do |y|
           quant.times do |i|
-            y << Math.sin(i / quant * 2 * Math::PI)
+            y << (Math.sin(i / quant * 2 * Math::PI) + 1) / 2
           end
         end
       end
 
-      # Generates values from a sinewave discretized to +quant+ events
-      # for the duration of +delta+ cycles.
+      # Generates values from a sawtooth waveform, discretized to +quant+ events
+      # for the duration of +delta+ cycles
       #
       # Values range from 0 to 1
       #
-      # @see #sin
-      #
       # @example
-      #   P.sin1(8).map { |i| i.round(2) }
-      #     #=> [0.5, 0.85, 1.0, 0.85, 0.5, 0.15, 0.0, 0.15]
+      #   peek P.saw(8)
+      #     #=> [(0/1), (1/8), (1/4), (3/8), (1/2), (5/8), (3/4), (7/8), (0/1), (1/8)]
       #
-      # @param quant [Fixnum]
-      # @param delta [Fixnum] (default: 1)
+      # @example +quant+ determines the size, +delta+ the total duration
+      #   P.saw(8).size           #=> 8
+      #   P.saw(22).duration      #=> (1/1)
+      #   P.saw(19, 2).duration   #=> (2/1)
+      #
+      # @param quant [Integer]
+      # @param delta [Integer] (default: 1)
       # @return [Pattern]
       #
-      def sin1(quant, delta=1)
-        sin(quant, delta).scale(-1, 1, 0, 1)
+      def saw(quant, delta=1)
+        Pattern.new(size: quant, delta: delta / quant) do |y|
+          quant.times do |i|
+            y << i / quant
+          end
+        end
+      end
+
+      # Generates an inverse sawtooth waveform, discretized to +quant+ events
+      # for the duration of +delta+ cycles
+      #
+      # Values range from 0 to 1
+      #
+      # @see P.saw
+      #
+      # @example
+      #   peek P.isaw(8)
+      #     #=> [(1/1), (7/8), (3/4), (5/8), (1/2), (3/8), (1/4), (1/8), (1/1), (7/8)]
+      #
+      # @param quant [Integer]
+      # @param delta [Integer] (default: 1)
+      # @return [Pattern]
+      #
+      def isaw(*args)
+        -P.saw(*args) + 1
+      end
+
+      # Generates a triangle waveform, discretized to +quant+ events for the
+      # duration of +delta+ cycles
+      #
+      # Values range from 0 to 1
+      #
+      # @example
+      #   peek P.tri(8)
+      #     #=> [(0/1), (1/4), (1/2), (3/4), (1/1), (3/4), (1/2), (1/4), (0/1), (1/4)]
+      #
+      # @param quant [Integer]
+      # @param delta [Integer] (default: 1)
+      # @return [Pattern]
+      #
+      def tri(quant, delta=1)
+        Pattern.new(size: quant, delta: delta / quant) do |y|
+          half_quant = quant / 2
+          up_half = half_quant.to_f.ceil
+          down_half = quant - up_half
+
+          up_half.times do |i|
+            y << i / half_quant
+          end
+          down_half.times do |i|
+            j = down_half - i
+            y << j / half_quant
+          end
+        end
       end
 
       private

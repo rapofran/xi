@@ -1,13 +1,12 @@
 # Xi  [![Build Status](https://travis-ci.org/xi-livecode/xi.svg?branch=master)](https://travis-ci.org/xi-livecode/xi)
 
-Xi (pronounced /ˈzaɪ/) is a musical pattern language inspired in Tidal and
-SuperCollider for building higher-level musical constructs easily.  It is
-implemented on the Ruby programming language.
+Xi is a musical pattern language inspired in Tidal and SuperCollider for
+building higher-level musical constructs easily.  It is implemented on the Ruby
+programming language and uses SuperCollider as a backend.
 
-Xi is only a patterns library, but can talk to different backends:
-
-- [SuperCollider](https://github.com/supercollider/supercollider)
-- MIDI devices
+Xi is only a patterns library, but can talk to
+[SuperCollider](https://github.com/supercollider/supercollider) synths or MIDI
+devices.
 
 *NOTE*: Be advised that this project is in very early alpha stages. There are a
 multiple known bugs, missing features, documentation and tests.
@@ -15,7 +14,7 @@ multiple known bugs, missing features, documentation and tests.
 ## Example
 
 ```ruby
-melody = [1,4,7,8,9]
+melody = [0,3,6,7,8]
 scale = [Scale.iwato, Scale.jiao]
 
 fm.set degree: melody.p(1/2,1/8,1/8,1/8,1/16,1/8,1/8).seq(2),
@@ -29,7 +28,7 @@ fm.set degree: melody.p(1/2,1/8,1/8,1/8,1/16,1/8,1/8).seq(2),
 
 kick.set freq: s("xi.x .ix. | xi.x xx.x", 70, 200), amp: 0.8, gate: :freq
 
-clap.set n: s("..x. xyz. .x.. .xyx", 60, 61, 60).p.decelerate(2),
+clap.set n: s("..x. xyz. .x.. .xyx", 60, 61, 60).p.slow(2),
          gate: :n,
          amp: 0.35,
          pan: P.sin(16, 2) * 0.6,
@@ -40,17 +39,20 @@ clap.set n: s("..x. xyz. .x.. .xyx", 60, 61, 60).p.decelerate(2),
 
 ### Quickstart
 
-You will need Ruby 2.1+ installed on your system.  Check by running `ruby
--v`.  To install Xi you must install the core libraries and REPL, and then one
-or more backends.
+You will need Ruby 2.4+ installed on your system.  Check by running `ruby -v`.
+To install Xi you must install the core libraries and REPL, and then one or
+more backends.
 
-If you want to use Xi with SuperCollider:
+    $ gem install xi-lang
 
-    $ gem install xi-lang xi-supercollider
+Available backends:
 
-Or with MIDI:
+* xi-midi: MIDI devices support
+* xi-superdirt: [SuperDirt](https://github.com/musikinformatik/SuperDirt) backend
 
-    $ gem install xi-lang xi-midi
+For example:
+
+    $ gem install xi-lang xi-superdirt
 
 Then run Xi REPL with:
 
@@ -100,24 +102,4 @@ the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
-The MIT License (MIT)
-
-Copyright (c) 2017 Damián Emiliano Silvani
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+See [LICENSE](LICENSE.txt)

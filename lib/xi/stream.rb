@@ -33,8 +33,9 @@ module Xi
 
     def set(delta: nil, gate: nil, **source)
       @mutex.synchronize do
+        remove_parameters_from_prev_source(source)
         @source = source
-        @gate = gate if gate
+        @gate = gate || parameter_with_smallest_delta(source)
         @delta = delta if delta
         @reset = true unless @playing
         update_internal_structures
@@ -279,7 +280,19 @@ module Xi
         n_value, _ = enum.peek
         update_state(p, n_value)
       end
+      transform_state
       @reset = false
+    end
+
+    def parameter_with_smallest_delta(source)
+      source.min_by { |param, enum|
+        delta = enum.p.delta
+        delta.is_a?(Array) ? delta.min : delta
+      }.first
+    end
+
+    def remove_parameters_from_prev_source(new_source)
+      (@source.keys - new_source.keys).each { |k| @state.delete(k) } unless @source.nil?
     end
 
     def latency_sec

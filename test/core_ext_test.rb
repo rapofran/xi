@@ -21,8 +21,8 @@ describe '#p' do
     end
   end
 
-  describe Fixnum do
-    it 'creates a Pattern from a Fixnum' do
+  describe Integer do
+    it 'creates a Pattern from a Integer' do
       assert_pattern [42], 42.p
     end
   end
@@ -53,14 +53,14 @@ describe '#p' do
 
   describe Hash do
     it 'creates a Pattern from a Hash' do
-      h = {degree: [1,2,3], scale: [Xi::Scale.major]}
+      h = {degree: [0,1,2], scale: [Xi::Scale.major]}
       assert_instance_of Xi::Pattern, h.p
       assert_equal [h], h.p.take_values(1)
     end
   end
 end
 
-describe Fixnum do
+describe Integer do
   describe '#/' do
     it 'divides number and casts it as a Rational' do
       assert_equal 1/2.to_r, 1/2
@@ -77,8 +77,8 @@ describe Numeric do
 
   describe '#degree_to_key' do
     it 'converts a degree number to key from a +scale+ and +steps_per_octave+' do
-      assert_equal 4, 3.degree_to_key(Xi::Scale.major, 12)
-      assert_equal 3, 3.degree_to_key(Xi::Scale.minor, 12)
+      assert_equal 4, 2.degree_to_key(Xi::Scale.major, 12)
+      assert_equal 3, 2.degree_to_key(Xi::Scale.minor, 12)
     end
   end
 end

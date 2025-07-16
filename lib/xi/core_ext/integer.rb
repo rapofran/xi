@@ -1,11 +1,11 @@
 module Xi::CoreExt
-  module Fixnum
+  module Integer
     def /(o)
       super(o.to_r)
     end
   end
 end
 
-class Fixnum
-  prepend Xi::CoreExt::Fixnum
+class Integer
+  prepend Xi::CoreExt::Integer
 end

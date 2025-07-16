@@ -8,7 +8,7 @@ module Xi::CoreExt
   end
 end
 
-class Fixnum;   include Xi::CoreExt::Scalar; end
+class Integer;  include Xi::CoreExt::Scalar; end
 class Float;    include Xi::CoreExt::Scalar; end
 class String;   include Xi::CoreExt::Scalar; end
 class Symbol;   include Xi::CoreExt::Scalar; end
